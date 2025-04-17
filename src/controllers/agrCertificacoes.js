@@ -3,10 +3,24 @@ const db = require('../dataBase/connection');
 module.exports = {
     async listarAgr_certificacoes(request, response) {
         try {
+             const sql = `
+                SELECT 
+                    agr_cert_id, agri_id, cert_id, agr_local,
+                    agr_data, agr_arquivo, agr_status
+                FROM AGR_CERTIFICACOES;
+             `;
+
+
+             const [rows]  = await db.query(sql);
+             
+             const nRegistros =  rows.length;
+
+
             return response.status(200).json({
                 sucesso: true, 
                 mensagem: 'Lista de certificacoes', 
-                dados: null
+                nRegistros,
+                dados: rows
             });
         } catch (error) {
             return response.status(500).json({
