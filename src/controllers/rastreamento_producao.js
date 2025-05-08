@@ -3,10 +3,35 @@ const db = require('../dataBase/connection');
 module.exports = {
     async listarRastreamento(request, response) {
         try {
-            return response.status(200).json({
-                sucesso: true, 
-                mensagem: 'Lista de rastremento', 
-                dados: null
+
+            const sql = `
+           SELECT 
+           rast_id,
+            agri_id, 
+            amen_id,
+            rast_data_plantacao, 
+            rast_data_colheita, 
+            rast_informacoes_adicionais, 
+            rast_area_plantacao 
+            FROM RASTREAMENTO_PRODUCAO;
+         `;
+
+
+         const [rows]  = await db.query(sql);
+         
+         const nRegistros =  rows.length;
+
+         return response.status(200).json({
+            sucesso: true, 
+            mensagem: 'Lista de rastreamento', 
+            nRegistros,
+            dados: rows
+
+
+
+
+
+           
             });
         } catch (error) {
             return response.status(500).json({
