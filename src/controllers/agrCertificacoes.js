@@ -3,6 +3,9 @@ const db = require('../dataBase/connection');
 module.exports = {
     async listarAgr_certificacoes(request, response) {
         try {
+
+            
+           
              const sql = `
                 SELECT 
                     agr_cert_id, agri_id, cert_id, agr_local,
@@ -32,10 +35,33 @@ module.exports = {
     }, 
     async cadastrarAgr_certificacoes(request, response) {
         try {
+            const { agri_id, cert_id, agr_local, agr_data, agr_arquivo, agr_status } = request.body;
+            
+            // Instrução SQL
+            const sql = `
+               INSERT INTO AGR_CERTIFICACOES (agri_id, cert_id, agr_local, agr_data, agr_arquivo, agr_status) VALUES
+                (?,?,?,?,?,?) 
+               
+               `;
+                    const values = [agri_id, cert_id, agr_local, agr_data, agr_arquivo, agr_status];
+
+                    const [result] = await db.query(sql, values);
+
+                    const dados = {
+                        agri_id: result.insertId,
+                        cert_id,
+                        agr_local,
+                        agr_data,
+                        agr_arquivo,
+                        agr_status
+                    };
+
+
+
             return response.status(200).json({
                 sucesso: true, 
                 mensagem: 'Cadastro de certificacoes', 
-                dados: null
+                dados: dados
             });
         } catch (error) {
             return response.status(500).json({

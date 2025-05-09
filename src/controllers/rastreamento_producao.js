@@ -43,10 +43,33 @@ module.exports = {
     }, 
     async cadastrarRastreamento(request, response) {
         try {
+            const { agri_id, amen_id, rast_data_plantacao, rast_data_colheita, rast_informacoes_adicionais, rast_area_plantacao } = request.body;
+            
+            // Instrução SQL
+            const sql = `
+               INSERT INTO RASTREAMENTO_PRODUCAO (agri_id, amen_id, rast_data_plantacao, rast_data_colheita, rast_informacoes_adicionais, rast_area_plantacao) VALUES
+                (?,?,?,?,?,?) 
+               
+               `;
+                    const values = [agri_id, amen_id, rast_data_plantacao, rast_data_colheita, rast_informacoes_adicionais, rast_area_plantacao];
+
+                    const [result] = await db.query(sql, values);
+
+                    const dados = {
+                        agri_id: result.insertId,
+                        amen_id,
+                        rast_data_plantacao,
+                        rast_data_colheita,
+                        rast_informacoes_adicionais,
+                        rast_area_plantacao
+                    };
+
+
+
             return response.status(200).json({
                 sucesso: true, 
                 mensagem: 'Cadastro de rastremento', 
-                dados: null
+                dados: dados
             });
         } catch (error) {
             return response.status(500).json({

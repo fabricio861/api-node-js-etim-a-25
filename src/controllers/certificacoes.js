@@ -37,10 +37,32 @@ module.exports = {
     }, 
     async cadastrarCertificacoes(request, response) {
         try {
+            const {cert_orgao_regulador, cert_nome} = request.body;
+            
+            // Instrução SQL
+            const sql = `
+              INSERT INTO CERTIFICACOES (cert_orgao_regulador, cert_nome) VALUES
+                (?,?) 
+               
+               `;
+                    const values = [cert_orgao_regulador, cert_nome];
+
+                    const [result] = await db.query(sql, values);
+
+                    const dados = {
+                        cert_orgao_regulador,
+                        cert_nome
+                    };
+
+
+
+
+
+
             return response.status(200).json({
                 sucesso: true, 
                 mensagem: 'Cadastro de certificacoes', 
-                dados: null
+                dados: dados
             });
         } catch (error) {
             return response.status(500).json({
