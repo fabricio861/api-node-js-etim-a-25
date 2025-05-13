@@ -81,10 +81,50 @@ module.exports = {
     }, 
     async editarRastreamento(request, response) {
         try {
+
+
+            const {agri_id, amen_id, rast_data_plantacao, rast_data_colheita, rast_informacoes_adicionais, rast_area_plantacao } = request.body;
+
+            const { id } = request.params;
+
+            const sql = `
+                UPDATE RASTREAMENTO_PRODUCAO SET
+                  agri_id =?, amen_id =?, rast_data_plantacao =? , rast_data_colheita =?, rast_informacoes_adicionais =?, rast_area_plantacao =?
+                WHERE
+                    rast_id  = ?;
+            `;
+
+            const values = [agri_id, amen_id, rast_data_plantacao, rast_data_colheita, rast_informacoes_adicionais, rast_area_plantacao, id ];
+
+            const [result] = await db.query(sql, values);
+
+            if(result.affectedRows === 0) {
+                return response.status(404).json({
+                    sucesso: false,
+                    mensagem: `Usuário ${id} não encontrado!`,
+                    dados: null
+                })
+            }
+
+            const dados = {
+                id,
+                agri_id,
+                amen_id, 
+                rast_data_plantacao,
+                rast_data_colheita,
+                rast_informacoes_adicionais,
+                rast_area_plantacao,
+            };
+
+
+
+
+
+
             return response.status(200).json({
                 sucesso: true, 
                 mensagem: 'Alteração no cadastro de rastreamento', 
-                dados: null
+                dados: dados
             });
         } catch (error) {
             return response.status(500).json({

@@ -74,10 +74,43 @@ module.exports = {
     }, 
     async editarCertificacoes(request, response) {
         try {
+
+            const { cert_orgao_regulador, cert_nome } = request.body;
+
+            const { id } = request.params;
+
+            const sql = `
+                UPDATE CERTIFICACOES SET
+                   cert_orgao_regulador =?, cert_nome =?
+                WHERE
+                     cert_id = ?;
+            `;
+
+            const values = [cert_orgao_regulador, cert_nome, id ];
+
+            const [result] = await db.query(sql, values);
+
+            if(result.affectedRows === 0) {
+                return response.status(404).json({
+                    sucesso: false,
+                    mensagem: `Usuário ${id} não encontrado!`,
+                    dados: null
+                })
+            }
+
+            const dados = {
+                id,
+                cert_orgao_regulador, 
+                cert_nome
+            };
+
+
+
+
             return response.status(200).json({
                 sucesso: true, 
                 mensagem: 'Alteração no cadastro das certificações', 
-                dados: null
+                dados: dados
             });
         } catch (error) {
             return response.status(500).json({

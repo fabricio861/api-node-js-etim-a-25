@@ -73,10 +73,43 @@ module.exports = {
     }, 
     async editarAgr_certificacoes(request, response) {
         try {
+            const { agri_id, cert_id, agr_local, agr_data, agr_arquivo, agr_status } = request.body;
+
+            const { id } = request.params;
+
+            const sql = `
+                UPDATE AGR_CERTIFICACOES SET
+                   agri_id =?, cert_id =? , agr_local =?, agr_data =?, agr_arquivo =?, agr_status =?
+                WHERE
+                    agr_cert_id= ?;
+            `;
+
+            const values = [agri_id, cert_id, agr_local, agr_data, agr_arquivo, agr_status, id ];
+
+            const [result] = await db.query(sql, values);
+
+            if(result.affectedRows === 0) {
+                return response.status(404).json({
+                    sucesso: false,
+                    mensagem: `Usuário ${id} não encontrado!`,
+                    dados: null
+                })
+            }
+
+            const dados = {
+                id,
+                agri_id,  
+                cert_id, 
+                agr_local,
+                agr_data, 
+                agr_arquivo, 
+                agr_status
+            };
+
             return response.status(200).json({
                 sucesso: true, 
-                mensagem: 'Alteração no cadastro das certificações', 
-                dados: null
+                mensagem: `Usuário ${id} atualizado com sucesso!`, 
+                dados
             });
         } catch (error) {
             return response.status(500).json({
@@ -84,6 +117,9 @@ module.exports = {
                 mensagem: 'Erro na requisição.', 
                 dados: error.message
             });
+           
+       
+
         }
     }, 
     async apagarAgr_certificacoes(request, response) {
