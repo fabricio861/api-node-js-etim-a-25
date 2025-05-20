@@ -4,14 +4,15 @@ module.exports = {
     async listarAgr_certificacoes(request, response) {
         try {
 
+             const sql = `SELECT
+             agr_cert_id, agri_id, cert_id, agr_local,
+             agr_data, agr_arquivo, agr_status,
+             agr_ativo = 1 AS agr_ativo 
+             FROM AGR_CERTIFICACOES
+             WHERE agr_ativo = 1;
+          `;
+
             
-           
-             const sql = `
-                SELECT 
-                    agr_cert_id, agri_id, cert_id, agr_local,
-                    agr_data, agr_arquivo, agr_status
-                FROM AGR_CERTIFICACOES;
-             `;
 
 
              const [rows]  = await db.query(sql);
@@ -124,11 +125,16 @@ module.exports = {
     }, 
     async apagarAgr_certificacoes(request, response) {
         try {
-            const {id} = request.params;
+            const ativo = false;
+    
+            const { id } = request.params;
+            const sql = `UPDATE AGR_CERTIFICACOES SET
+             agr_ativo = ?
+             where
+             agr_id = ?;
+             `;
 
-            const sql =`DELETE FROM AGR_CERTIFICACOES WHERE agr_cert_id = ?`;
-
-            const values = [id];
+            const values = [ativo, id];
             const [result] = await db.query(sql, values);
 
             if (result.affectedRows === 0) {
@@ -141,7 +147,7 @@ module.exports = {
 
             return response.status(200).json({
                 sucesso: true, 
-                mensagem: 'Exclusão das certificações', 
+            mensagem:  ` agr ${id}  exclusão das certificações`, 
                 dados: null
             });
         } catch (error) {
