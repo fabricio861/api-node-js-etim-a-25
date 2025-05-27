@@ -12,8 +12,11 @@ module.exports = {
             rast_data_plantacao, 
             rast_data_colheita, 
             rast_informacoes_adicionais, 
-            rast_area_plantacao 
-            FROM RASTREAMENTO_PRODUCAO;
+            rast_area_plantacao,
+            rast_ativo =1 AS rast_ativo  
+            FROM RASTREAMENTO_PRODUCAO
+            WHERE 
+            rast_ativo = 1;
          `;
 
 
@@ -137,8 +140,12 @@ module.exports = {
     async apagarRastreamento(request, response) {
         try {
             const {id} = request.params;
+            const ativo = false;
 
-            const sql =`DELETE FROM RASTREAMENTO_PRODUCAO WHERE rast_id =?`;
+            const sql =`UPDATE RASTREAMENTO_PRODUCAO SET
+            rast_ativo =?
+            where
+            rast_id=?`;
 
             const values = [id];
             const [result] = await db.query(sql, values);

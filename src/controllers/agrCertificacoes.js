@@ -140,14 +140,14 @@ module.exports = {
             if (result.affectedRows === 0) {
                 return res.status(404).json({
                     sucesso:false,
-                    mensagem: `Usuário ${agr_cert_id} não encontrado!`,
+                    mensagem: `certifiações  ${agr_cert_id} não encontrado!`,
                     dados:null
                 });
             }
 
             return response.status(200).json({
                 sucesso: true, 
-            mensagem:  ` agr ${id}  exclusão das certificações`, 
+            mensagem:  `  ${id}  exclusão das certificações`, 
                 dados: null
             });
         } catch (error) {

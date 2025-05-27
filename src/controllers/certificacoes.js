@@ -8,8 +8,12 @@ module.exports = {
             SELECT 
             cert_id, 
             cert_orgao_regulador, 
-            cert_nome 
-            FROM CERTIFICACOES;
+            cert_nome,
+            cert_ativo = 1 AS cert_ativo
+            FROM CERTIFICACOES
+            WHERE cert_ativo = 1;
+
+            
          `;
 
 
@@ -122,9 +126,13 @@ module.exports = {
     }, 
     async apagarCertificacoes(request, response) {
         try {
+            const ativo =false;
             const {id} = request.params;
 
-            const sql =`DELETE FROM CERTIFICACOES WHERE cert_id =?`;
+            const sql =`UPDATE CERTIFICACOES SET
+            cert_ativo =?
+
+            where cert_id = ?;`;
 
             const values = [id];
             const [result] = await db.query(sql, values);
@@ -132,7 +140,7 @@ module.exports = {
             if (result.affectedRows === 0) {
                 return res.status(404).json({
                     sucesso:false,
-                    mensagem: `Usuário ${ cert_id} não encontrado!`,
+                    mensagem: `certificado ${ cert_id} não encontrado!`,
                     dados:null
                 });
             }
